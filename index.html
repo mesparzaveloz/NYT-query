@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>New York Times Search</title>
+  <!-- Bootswatch Styling for Improving the Aesthetics -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/flatly/bootstrap.min.css">
+
+  <!-- Font Awesome CSS Icons (For cool glyphicons) -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+  <!-- Style to fix the issue of text extending past panel length -->
+  <style>
+    .panel-body a {
+      word-break: break-all;
+    }
+  </style>
+</head>
+
+<body style="padding:20px; background-color:lightblue">
+        <h1 style="background-color:blue; color:white; margin:auto;text-align: center;">New York Times Search</h1>
+                <div class="container" style="padding:20px; background-color:white;border-radius: 2%; margin:50px;">
+                        <div class="row">
+                                <div class="col-sm">
+                                    <h3 style="background-color:blue; color:white; margin:auto;text-align: center;">Search Parameters</h3>
+                                    <form>
+                                            <div class="form-group">
+                                              <label for="exampleFormControlInput1">Search term</label>
+                                              <input type="email" class="form-control" id="term" placeholder="Mexico president">
+                                            </div>
+
+                                            <div class="form-group">
+                                                    <label for="exampleFormControlInput1">Number of articles to retr</label>
+                                                    <input type="email" class="form-control" id="number" placeholder="5">
+                                                  </div>
+
+                                                  <div class="form-group">
+                                                        <label for="exampleFormControlInput1">Start Year</label>
+                                                        <input type="email" class="form-control" id="startyr" placeholder="example: 2009">
+                                                      </div>
+
+                                                      <div class="form-group">
+                                                            <label for="exampleFormControlInput1">End Year</label>
+                                                            <input type="email" class="form-control" id="endyr" placeholder="example: 2010">
+                                                          </div>
+                                           
+                                          </form>
+                                          <button type="button" class="btn btn-primary" id="Search">Search</button>
+                                          <button type="button" class="btn btn-primary" id="Clear">Clear</button>
+                                </div>
+
+                              </div>
+                </div>
+
+                <div class="container" style="padding:20px; background-color:white;border-radius: 10%;margin:50px;">
+                        <div class="row">
+                                <div class="col-sm">
+                                        <h3 style="background-color:blue; color:white; margin:auto;text-align: center;">Results</h3>
+
+                                        <div class="Result"></div>
+
+                                </div>
+
+                              </div>
+                </div>
+
+
+  <!-- Code to the JavaScript File -->
+
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+ <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+
+ <script type="text/javascript">
+    $("#Clear").on("click", function() {
+       var clear=$("form-group");
+       clear.reset();
+    });
+   
+   
+    $("#Search").on("click", function() {
+   
+        var article = $("#term").val();
+           var queryURL = "https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=R1a31F4tBjCUaM2ho8GtIFsrSdtXt30M&q=" + article;
+
+
+           if ($("#startyr").val() != "") { queryURL += "&begin_date=" + $("#startyr").val() + "0101"; }
+           if ($("#endyr").val() != "")   { queryURL += "&end_date="   + $("#endyr").val()   + "0101";}
+           $.ajax({
+               url: queryURL,
+               method: "GET"
+           })
+               .then(function (response) {
+                  console.log(queryURL);
+                  var length = $("#number").val();
+                  console.log(length);
+                  console.log(response);
+                  for (var index = 0; index < length ; index++) {            
+                      var p = $("<p>");
+                      p.text(response.response.docs[index].headline.main);
+                      $(".Result").append(p);
+                      console.log(p);
+                      var p = $("<p>");
+                      p.text(response.response.docs[index].pub_date);
+                      $(".Result").append(p);
+                      var p = $("<p>");
+                      p.text(response.response.docs[index].snippet);
+                      $(".Result").append(p);
+                      var p = $("<p>");
+                      p.text(response.response.docs[index].web_url);
+                      //document.getElementsByTagName("p").href = response.response.docs[index].web_url;
+                      $(".Result").append(p);
+
+                      $(".Result").append("-------------------------------");
+               }
+
+
+
+               });
+   
+       
+    });
+
+   </script>
+</body>
+
+</html>
